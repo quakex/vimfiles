@@ -38,6 +38,7 @@ set background=dark
 set t_Co=256
 color tir_black
 set cursorline
+colorscheme solarized
 
 " JQuery syntax support
 autocmd Syntax javascript set syntax=jquery
@@ -82,14 +83,14 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=239
 autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=242
 
 " NeoComplCache
-let g:neocomplcache_force_overwrite_completefunc = 1
-let g:neocomplcache_enable_at_startup=1
-let g:neocomplcache_enable_smart_case=1
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-let g:neosnippet#disable_runtime_snippets = { "_": 1, }
-autocmd Syntax html let g:neocomplcache_disable_auto_complete=1
-set completeopt-=preview
+"let g:neocomplcache_force_overwrite_completefunc = 1
+"let g:neocomplcache_enable_at_startup=1
+"let g:neocomplcache_enable_smart_case=1
+"let g:neocomplcache_min_syntax_length = 3
+"let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+"let g:neosnippet#disable_runtime_snippets = { "_": 1, }
+"autocmd Syntax html let g:neocomplcache_disable_auto_complete=1
+"set completeopt-=preview
 
 " Snippet
 " Enable snipMate compatibility feature.
@@ -175,3 +176,8 @@ autocmd BufNew,BufRead,BufNewFile,BufEnter /etc/nginx/*,/usr/local/nginx/*,/usr/
 
 " Slim syntax highlighting
 autocmd BufNew,BufRead,BufNewFile,BufEnter *.slim setfiletype slim
+
+" ------------------------------------------------------------------------------
+" Calendar 
+let g:calendar_diary="/Users/quakex/Nutstore/APP/diary"
+map ;ca :Calendar<cr>
