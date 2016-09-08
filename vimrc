@@ -82,28 +82,8 @@ let g:indent_guides_guide_size=1
 autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=239
 autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=242
 
-" NeoComplCache
-"let g:neocomplcache_force_overwrite_completefunc = 1
-"let g:neocomplcache_enable_at_startup=1
-"let g:neocomplcache_enable_smart_case=1
-"let g:neocomplcache_min_syntax_length = 3
-"let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-"let g:neosnippet#disable_runtime_snippets = { "_": 1, }
-"autocmd Syntax html let g:neocomplcache_disable_auto_complete=1
-"set completeopt-=preview
-
 " Snippet
-" Enable snipMate compatibility feature.
-let g:neosnippet#enable_snipmate_compatibility = 1
 
-" Tell Neosnippet about the other snippets
-let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
-
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 if has('conceal')
   set conceallevel=2 concealcursor=i
@@ -156,7 +136,14 @@ autocmd Syntax lisp,scheme,clojure RainbowParenthesesLoadSquare
 autocmd Syntax             clojure RainbowParenthesesLoadBraces
 
 " Easymotion leader key
-let g:EasyMotion_leader_key = '<Leader>'
+" These keys are easier to type than the default set
+" We exclude semicolon because it's hard to read and
+" i and l are too easy to mistake for each other slowing
+" down recognition. The home keys and the immediate keys
+" accessible by middle fingers are available 
+let g:EasyMotion_keys='asdfjkoweriop'
+nmap ,<ESC> ,,w
+nmap ,<S-ESC> ,,b
 
 " Key mappings
 nmap <F4> :IndentGuidesToggle<cr>
@@ -181,3 +168,152 @@ autocmd BufNew,BufRead,BufNewFile,BufEnter *.slim setfiletype slim
 " Calendar 
 let g:calendar_diary="/Users/quakex/Nutstore/APP/diary"
 map ;ca :Calendar<cr>
+
+" Set ultisnips triggers
+let g:UltiSnipsExpandTrigger="<c-k>"
+let g:UltiSnipsJumpForwardTrigger="<c-l>"
+let g:UltiSnipsJumpBackwardTrigger="<c-m>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+" Surround
+"
+" via: http://whynotwiki.com/Vim
+" " Ruby
+" " Use v or # to get a variable interpolation (inside of a string)}
+" " ysiw#   Wrap the token under the cursor in #{}
+" " v...s#  Wrap the selection in #{}
+ let g:surround_113 = "#{\r}"   " v
+ let g:surround_35  = "#{\r}"   " #
+"
+" " Select text in an ERb file with visual mode and then press s- or s=
+" " Or yss- to do entire line.
+ let g:surround_45 = "<% \r %>"    " -
+ let g:surround_61 = "<%= \r %>"   " =
+
+" ------------------------------------------------------------------------------
+"  CtrlP
+"  ------------------------------------------------------------------------------
+if exists("g:ctrlp_user_command")
+  unlet g:ctrlp_user_command
+endif
+if executable('ag')
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command =
+    \ 'ag %s --files-with-matches -g "" --ignore "\.git$\|\.hg$\|\.svn$"'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+else
+  " Fall back to using git ls-files if Ag is not available
+  let g:ctrlp_custom_ignore = '\.git$\|\.hg$\|\.svn$'
+  let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others']
+endif
+
+" Default to filename searches - so that appctrl will find application
+" controller
+let g:ctrlp_by_filename = 1
+
+" Don't jump to already open window. This is annoying if you are maintaining
+" several Tab workspaces and want to open two windows into the same file.
+let g:ctrlp_switch_buffer = 0
+
+" We don't want to use Ctrl-p as the mapping because
+" it interferes with YankRing (paste, then hit ctrl-p)
+let g:ctrlp_map = ',t'
+nnoremap <silent> ,t :CtrlP<CR>
+
+" Additional mapping for buffer search
+nnoremap <silent> ,b :CtrlPBuffer<cr>
+
+" Cmd-Shift-P to clear the cache
+nnoremap <silent> <D-P> :ClearCtrlPCache<cr>
+
+" Idea from : http://www.charlietanksley.net/blog/blog/2011/10/18/vim-navigation-with-lustyexplorer-and-lustyjuggler/
+" Open CtrlP starting from a particular path, making it much
+" more likely to find the correct thing first. mnemonic 'jump to [something]'
+map ,ja :CtrlP app/assets<CR>
+map ,jm :CtrlP app/models<CR>
+map ,jc :CtrlP app/controllers<CR>
+map ,jv :CtrlP app/views<CR>
+map ,jh :CtrlP app/helpers<CR>
+map ,jl :CtrlP lib<CR>
+map ,jp :CtrlP public<CR>
+map ,js :CtrlP spec<CR>
+map ,jf :CtrlP fast_spec<CR>
+map ,jd :CtrlP db<CR>
+map ,jC :CtrlP config<CR>
+map ,jV :CtrlP vendor<CR>
+map ,jF :CtrlP factories<CR>
+map ,jT :CtrlP test<CR>
+
+"Cmd-Shift-(M)ethod - jump to a method (tag in current file)
+"Ctrl-m is not good - it overrides behavior of Enter
+nnoremap <silent> <D-M> :CtrlPBufTag<CR>
+
+imap <C-a> <esc>wa
+
+"Move back and forth through previous and next buffers
+"with ,z and ,x
+nnoremap <silent> ,z :bp<CR>
+nnoremap <silent> ,x :bn<CR>
+
+"Clear current search highlight by double tapping //
+nmap <silent> // :nohlsearch<CR>
+
+" Use Q to intelligently close a window 
+" (if there are multiple windows into the same buffer)
+" or kill the buffer entirely if it's the last window looking into that buffer
+function! CloseWindowOrKillBuffer()
+  let number_of_windows_to_this_buffer = len(filter(range(1, winnr('$')), "winbufnr(v:val) == bufnr('%')"))
+
+  " We should never bdelete a nerd tree
+  if matchstr(expand("%"), 'NERD') == 'NERD'
+    wincmd c
+    return
+  endif
+
+  if number_of_windows_to_this_buffer > 1
+    wincmd c
+  else
+    bdelete
+  endif
+endfunction
+
+nnoremap <silent> Q :call CloseWindowOrKillBuffer()<CR>
+
+" w!! to write a file as sudo
+" stolen from Steve Losh
+cmap w!! w !sudo tee % >/dev/null
+
+function! GetVisual()
+  let reg_save = getreg('"')
+  let regtype_save = getregtype('"')
+  let cb_save = &clipboard
+  set clipboard&
+  normal! ""gvy
+  let selection = getreg('"')
+  call setreg('"', reg_save, regtype_save)
+  let &clipboard = cb_save
+  return selection
+endfunction
+
+"grep the current word using K (mnemonic Kurrent)
+nnoremap <silent> K :Ag <cword><CR>
+
+"grep visual selection
+vnoremap K :<C-U>execute "Ag " . GetVisual()<CR>
+
+"grep current word up to the next exclamation point using ,K
+nnoremap ,K viwf!:<C-U>execute "Ag " . GetVisual()<CR>
+
+"grep for 'def foo'
+nnoremap <silent> ,gd :Ag 'def <cword>'<CR>
+
+",gg = Grep! - using Ag the silver searcher
+" open up a grep line, with a quote started for the search
+nnoremap ,gg :Ag ""<left>
+
+"Grep for usages of the current file
+nnoremap ,gcf :exec "Ag " . expand("%:t:r")<CR>
+
